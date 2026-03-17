@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Ravose</string>
+    <string name="welcome_image_caption">Bőrápolás, ahogy megérdemled.</string>
+    <string name="main_title">A tudatos bőrápolás kezdete</string>
+    <string name="btn_start">Kezdés</string>
+    <string name="login_link">Már van fiókod? Bejelentkezés</string>
+
+    <string name="home_subtitle">Ma is ragyogóan nézel ki.</string>
+    <string name="home_streak_format">%s napos sorozat</string>
+    <string name="home_todo_title">Napi teendők</string>
+    <string name="home_morning_routine">Reggeli rutin</string>
+    <string name="home_morning_desc">Tisztítás és fényvédelem</string>
+    <string name="home_evening_routine">Esti rutin</string>
+    <string name="home_evening_desc">Retinol és hidratálás</string>
+    <string name="nav_home">Főoldal</string>
+    <string name="nav_products">Termékek</string>
+    <string name="nav_stats">Statisztika</string>
+    <string name="nav_profile">Profil</string>
+
+    <string name="home_daily_tip_title">Napi tipp</string>
+    <string name="home_daily_tip_content">Ne feledd a fényvédőt! A nap sugarai felhős időben is érik a bőrödet, a védekezés a legjobb anti-aging.</string>
+
+    <string name="stats_title">Statisztika</string>
+    <string name="stats_weekly_overview">HETI ÁTTEKINTÉS</string>
+    <string name="stats_daily_log">Mai napló</string>
+    <string name="stats_morning_done">Reggeli rutin kész</string>
+    <string name="stats_sunscreen_done">Fényvédő felkenve</string>
+    <string name="stats_evening_done">Esti rutin kész</string>
+    <string name="stats_hydration">HIDRATÁLTSÁG</string>
+    <string name="stats_water_goal">Cél: 8 pohár</string>
+    <string name="btn_back_desc">Vissza</string>
+
+    <string name="day_h">H</string>
+    <string name="day_k">K</string>
+    <string name="day_sz">Sz</string>
+    <string name="day_cs">Cs</string>
+    <string name="day_p">P</string>
+    <string name="day_szo">Sz</string>
+    <string name="day_v">V</string>
+</resources>

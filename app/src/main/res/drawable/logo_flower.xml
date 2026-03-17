@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Külső vékony kör -->
+    <path
+        android:pathData="M50,50m-48,0a48,48 0,1 1,96 0a48,48 0,1 1,-96 0"
+        android:strokeWidth="1"
+        android:strokeColor="#F1F5F9" />
+
+    <!-- A virág szirmok (púder rózsaszín) -->
+    <!-- Középső szirom -->
+    <path
+        android:fillColor="#F2D2D2"
+        android:pathData="M50,35 C55,35 60,45 60,55 C60,65 55,70 50,70 C45,70 40,65 40,55 C40,45 45,35 50,35 Z" />
+
+    <!-- Bal oldali szirom -->
+    <path
+        android:fillColor="#F2D2D2"
+        android:pathData="M42,52 C35,48 28,55 28,65 C28,75 35,78 45,72 C48,70 45,60 42,52 Z" />
+
+    <!-- Jobb oldali szirom -->
+    <path
+        android:fillColor="#F2D2D2"
+        android:pathData="M58,52 C65,48 72,55 72,65 C72,75 65,78 55,72 C52,70 55,60 58,52 Z" />
+
+</vector>
