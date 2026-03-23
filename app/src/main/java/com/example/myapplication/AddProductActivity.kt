@@ -347,6 +347,7 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
 
+
     private fun showMultiSelectIngredientsDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Válassz összetevőket")
