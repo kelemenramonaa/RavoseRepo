@@ -111,6 +111,27 @@
                     android:paddingHorizontal="16dp"
                     android:importantForAutofill="no" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/rememberMeCheck"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/powder_pink" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Emlékezz rám"
+                        android:textColor="@color/slate_500"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/forgotPasswordText"
                     android:layout_width="wrap_content"

@@ -4,6 +4,43 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Fő színek -->
+        <item name="colorPrimary">@color/powder_pink</item>
+        <item name="colorAccent">@color/deep_pink</item>
+
+        <!-- Alapértelmezett naptár színek a témához -->
+        <item name="android:datePickerDialogTheme">@style/PinkDatePickerTheme</item>
+
+        <!-- Alapértelmezett AlertDialog téma (AppCompat és Material) -->
+        <item name="android:alertDialogTheme">@style/PinkAlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/PinkAlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/PinkAlertDialogTheme</item>
+    </style>
+
+    <style name="PinkDatePickerTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorAccent">@color/deep_pink</item>
+        <item name="android:colorAccent">@color/deep_pink</item>
+        <item name="android:headerBackground">@color/powder_pink</item>
+        <item name="android:calendarTextColor">@color/slate_800</item>
+        <item name="android:dayOfWeekBackground">@color/cream</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/PinkButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/PinkButtonStyle</item>
+    </style>
+
+    <style name="PinkAlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorAccent">@color/deep_pink</item>
+        <item name="android:colorAccent">@color/deep_pink</item>
+        <item name="android:textColorPrimary">@color/slate_800</item>
+        <item name="android:background">@color/white</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PinkButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/PinkButtonStyle</item>
+    </style>
+
+    <style name="PinkButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/deep_pink</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="BottomNavText">
@@ -15,5 +52,10 @@
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">serif</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

@@ -17,6 +17,10 @@
     <color name="slate_800">#1E293B</color>
     <color name="slate_500">#64748B</color>
     <color name="slate_400">#94A3B8</color>
+    <color name="slate_300">#CBD5E1</color>
+
+    <!-- Új szín a statisztikához-->
+    <color name="stat_inactive_gray">#F1F5F9</color>
 
     <!-- Statisztika és Ravose arculati színek -->
     <color name="ravose_background">#FAF9F6</color>
@@ -30,4 +34,8 @@
     <color name="ritual_text">#4F4445</color>
     <color name="ritual_outline">#D2C3C4</color>
     <color name="ritual_bg_light">#FCF9F5</color>
+
+    <!-- Lejárati dátumhoz kapcsolódó színek -->
+    <color name="expired_red">#E11D48</color>
+    <color name="warning_orange">#F59E0B</color>
 </resources>

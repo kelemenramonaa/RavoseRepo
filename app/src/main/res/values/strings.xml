@@ -5,8 +5,13 @@
     <string name="btn_start">Kezdés</string>
     <string name="login_link">Már van fiókod? Bejelentkezés</string>
 
-    <string name="home_subtitle">Ma is ragyogóan nézel ki.</string>
-    <string name="home_streak_format">%s napos sorozat</string>
+    <string name="home_welcome_format">Szia, %s!</string>
+    <string name="home_cute_subtitle">Ma is ragyogsz, mint egy csillag! ✨</string>
+    <string name="home_default_username">Anna</string>
+    <string name="home_streak_format">%d napos sorozat</string>
+    <string name="home_progress_format">%d%%</string>
+    <string name="home_click_to_create">Kattints a kialakításhoz…</string>
+
     <string name="home_todo_title">Napi teendők</string>
     <string name="home_morning_routine">Reggeli rutin</string>
     <string name="home_morning_desc">Tisztítás és fényvédelem</string>
@@ -18,7 +23,15 @@
     <string name="nav_profile">Profil</string>
 
     <string name="home_daily_tip_title">Napi tipp</string>
-    <string name="home_daily_tip_content">Ne feledd a fényvédőt! A nap sugarai felhős időben is érik a bőrödet, a védekezés a legjobb anti-aging.</string>
+    <string-array name="home_daily_tips">
+        <item>Ne feledd a fényvédőt! A nap sugarai felhős időben is érik a bőrödet.</item>
+        <item>Hidratálj belülről is! Igyál meg ma legalább 2 liter vizet.</item>
+        <item>A dupla tisztítás az esti rutin alapja a tiszta pórusokért.</item>
+        <item>C-vitamin szérumot reggel használj az antioxidáns védelemért.</item>
+        <item>A retinol segít a bőr megújulásában, azaz sejtosztódást serkent, de csak este használd!</item>
+        <item>Cseréld le a párnahuzatodat hetente a pattanások megelőzése érdekében.</item>
+        <item>A rendszeresség a kulcs: ne hagyd ki az esti rutint fáradtan sem!</item>
+    </string-array>
 
     <string name="stats_title">Statisztika</string>
     <string name="stats_weekly_overview">HETI ÁTTEKINTÉS</string>
@@ -37,4 +50,41 @@
     <string name="day_p">P</string>
     <string name="day_szo">Sz</string>
     <string name="day_v">V</string>
+
+    <!-- Profil képernyő -->
+    <string name="profile_title">Profilom</string>
+    <string name="profile_edit_data">Adatok módosítása</string>
+    <string name="profile_logout">Kijelentkezés</string>
+    <string name="profile_delete_account">Fiók törlése</string>
+    <string name="profile_skin_type_title">Bőrtípus beállítása</string>
+    <string name="profile_personal_data_title">Személyes adatok</string>
+    <string name="profile_notifications_title">Értesítések kezelése</string>
+    <string name="profile_morning_notif">Reggeli rutin emlékeztető</string>
+    <string name="profile_evening_notif">Esti rutin emlékeztető</string>
+    <string name="notif_granted">Értesítések engedélyezve</string>
+    <string name="notif_denied">Értesítések letiltva</string>
+    <string name="profile_photo_updated">Profilkép frissítve!</string>
+    <string name="profile_photo_error">Hiba a kép mentésekor</string>
+    <string name="delete_confirm_title">Fiók törlése</string>
+    <string name="delete_confirm_msg">Biztosan törölni szeretnéd a fiókodat? Ez a művelet nem vonható vissza, és minden adatod elvész.</string>
+    <string name="delete_btn">Törlés</string>
+    <string name="cancel_btn">Mégse</string>
+    <string name="delete_success">Fiók sikeresen törölve.</string>
+    <string name="error_email_not_found">Hiba: Felhasználói email nem található.</string>
+    <string name="error_user_not_found">A felhasználó nem található az adatbázisban.</string>
+    <string name="error_general">Hiba történt: %s</string>
+
+    <!-- Értesítés szövegek -->
+    <string name="notif_morning_title">Jó reggelt, %s! ✨</string>
+    <string name="notif_morning_msg">Egy új nap, egy új lehetőség a ragyogásra. Kezdd a reggelt a rutinoddal!</string>
+    <string name="notif_evening_title">Esti én-idő következik... 🌙</string>
+    <string name="notif_evening_msg">A bőröd hálás lesz a törődésért. Szánj pár percet magadra lefekvés előtt!</string>
+
+    <!-- Termékek képernyő -->
+    <string name="products_categories_title">Termékkategóriák</string>
+    <string name="products_no_results">Ebben a kategóriában még nincsenek termékeid.</string>
+    <string name="products_delete_success">Termék törölve</string>
+    <string name="expiry_label">Lejárat: %s</string>
+    <string name="expired_status">LEJÁRT: %s</string>
+    <string name="delete_product_confirm_msg">Biztosan törölni szeretnéd ezt a terméket: %s?</string>
 </resources>

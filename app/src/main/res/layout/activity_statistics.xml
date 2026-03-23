@@ -15,28 +15,29 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/btnBack"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:padding="8dp"
                 android:src="@drawable/ic_arrow_back"
-                app:tint="@color/deep_pink"
-                android:contentDescription="@string/btn_back_desc" />
+                app:tint="@color/slate_800"
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@string/stats_title"
+                android:text="Statisztika"
                 android:textColor="@color/slate_800"
                 android:textSize="18sp"
                 android:fontFamily="serif"
                 android:textStyle="bold" />
+
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -45,213 +46,494 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="24dp">
 
-            <!-- Branded Ravose Header -->
-            <LinearLayout
-                android:id="@+id/headerGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:layout_marginBottom="32dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_name"
-                    android:textColor="@color/deep_pink"
-                    android:textSize="48sp"
-                    android:fontFamily="serif"
-                    android:textStyle="italic"
-                    android:letterSpacing="0.2" />
-
-                <View
-                    android:layout_width="40dp"
-                    android:layout_height="1dp"
-                    android:background="@color/powder_pink"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- HETI HALADÁS - PIPÁLHATÓ KÖRÖK -->
-            <LinearLayout
+            <!-- Motivational Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/soft_pink"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginBottom="32dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/stats_weekly_overview"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/deep_pink"
-                    android:letterSpacing="0.2" />
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#FFF1F1"
+                app:cardBackgroundColor="#FFFDFD">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="16dp">
+                    android:padding="24dp"
+                    android:gravity="center_vertical">
 
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_h" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_k" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_sz" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_cs" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_p" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_szo" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
-                    <CheckBox android:layout_width="36dp" android:layout_height="36dp" android:text="@string/day_v" android:button="@null" android:gravity="center" android:background="@drawable/selector_day_check" android:textColor="@android:color/white" android:layout_margin="2dp" android:textSize="11sp" android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/logo_flower"
+                        app:tint="@color/powder_pink" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NAGYSZERŰEN HALADSZ!"
+                            android:textColor="@color/slate_800"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05" />
+
+                        <TextView
+                            android:id="@+id/tvInsightText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Minden lépés számít! Folytasd bátran."
+                            android:textColor="@color/slate_500"
+                            android:textSize="12sp"
+                            android:lineSpacingExtra="2dp" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- MAI NAPLÓ -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stats_daily_log"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:fontFamily="serif"
-                android:textColor="@color/slate_800"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="4dp" />
-
-            <androidx.cardview.widget.CardView
+            <!-- Streak Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FOLYAMATOSSÁG"
+                            android:textSize="10sp"
+                            android:textColor="@color/powder_pink"
+                            android:letterSpacing="0.1"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="bottom"
+                            android:layout_marginTop="4dp">
+
+                            <TextView
+                                android:id="@+id/tvStreakCountLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="@color/slate_800"
+                                android:textSize="44sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" napos sorozat"
+                                android:textColor="@color/slate_500"
+                                android:textSize="16sp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginBottom="8dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/circle_pink_full"
+                        android:backgroundTint="#FFF1F1" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_favorite"
+                        app:tint="@color/powder_pink" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tab Selector -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@android:color/white"
-                android:layout_marginBottom="32dp">
+                app:cardBackgroundColor="#F1F5F9">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="4dp">
+
+                    <TextView
+                        android:id="@+id/tabWeekly"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Heti"
+                        android:gravity="center"
+                        android:background="@drawable/edittext_rounded_white"
+                        android:textColor="@color/slate_800"
+                        android:textStyle="bold"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tabMonthly"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Havi"
+                        android:gravity="center"
+                        android:textColor="@color/slate_400"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tabYearly"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Éves"
+                        android:gravity="center"
+                        android:textColor="@color/slate_400"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Product Category Stats Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="8dp">
+                    android:padding="24dp">
 
-                    <CheckBox
-                        android:id="@+id/checkMorning"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Termékhasználat"
+                                android:textColor="@color/slate_800"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvWeeklyRange"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ezen a héten"
+                                android:textColor="@color/slate_400"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:gravity="end"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvWeeklyPercent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0%"
+                                android:textColor="@color/powder_pink"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AKTIVITÁS"
+                                android:textColor="@color/slate_400"
+                                android:textSize="9sp"
+                                android:letterSpacing="0.1" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Category Usage List -->
+                    <LinearLayout
+                        android:id="@+id/categoryStatsContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/stats_morning_done"
-                        android:padding="16dp"
-                        android:buttonTint="@color/deep_pink"
-                        android:fontFamily="serif" />
+                        android:layout_marginTop="24dp"
+                        android:orientation="vertical">
+                    </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/cream"
-                        android:layout_marginHorizontal="16dp" />
-
-                    <CheckBox
-                        android:id="@+id/checkSunscreen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/stats_sunscreen_done"
-                        android:padding="16dp"
-                        android:buttonTint="@color/deep_pink"
-                        android:fontFamily="serif" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/cream"
-                        android:layout_marginHorizontal="16dp" />
-
-                    <CheckBox
-                        android:id="@+id/checkEvening"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/stats_evening_done"
-                        android:padding="16dp"
-                        android:buttonTint="@color/deep_pink"
-                        android:fontFamily="serif" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- VÍZFOGYASZTÁS TRACKER -->
-            <androidx.cardview.widget.CardView
+            <!-- Bottom Stats Grid -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/soft_pink"
-                android:layout_marginBottom="32dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="24dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/stats_hydration"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/deep_pink"
-                        android:letterSpacing="0.2" />
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@android:color/white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
 
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
-                        <CheckBox android:layout_width="32dp" android:layout_height="40dp" android:button="@null" android:background="@drawable/selector_glass_check" android:layout_margin="2dp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="@color/powder_pink" />
+
+                        <TextView
+                            android:id="@+id/tvTotalDone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="0"
+                            android:textColor="@color/slate_800"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Összesen elvégezve"
+                            android:textColor="@color/slate_400"
+                            android:textSize="12sp" />
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/waterStatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/stats_water_goal"
-                        android:textSize="12sp"
-                        android:textColor="@color/slate_500" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_calendar"
+                            app:tint="@color/powder_pink" />
+
+                        <TextView
+                            android:id="@+id/tvWeeklyAverage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="0.0"
+                            android:textColor="@color/slate_800"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvAverageLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Heti átlag (nap)"
+                            android:textColor="@color/slate_400"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Nav Bar -->
-    <LinearLayout
-        android:id="@+id/bottomNav"
+    <!-- Új Nav Bar kártyával -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavCard"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:strokeWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="@string/nav_home" android:textColor="@color/slate_400" android:textSize="12sp" android:fontFamily="serif" />
-        <TextView android:id="@+id/navProducts" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="@string/nav_products" android:textColor="@color/slate_400" android:textSize="12sp" android:fontFamily="serif" />
-        <TextView android:id="@+id/navStats" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="@string/nav_stats" android:textColor="@color/slate_800" android:textStyle="bold" android:textSize="12sp" android:fontFamily="serif" />
-        <TextView android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="@string/nav_profile" android:textColor="@color/slate_400" android:textSize="12sp" android:fontFamily="serif" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:gravity="center">
+
+            <!-- Főoldal -->
+            <LinearLayout
+                android:id="@+id/navHomeLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavHome"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Főoldal"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Termékek -->
+            <LinearLayout
+                android:id="@+id/navProductsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProducts"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_spa"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavProducts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Termékek"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Statisztika -->
+            <LinearLayout
+                android:id="@+id/navStatsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavStats"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_fire"
+                    app:tint="@color/deep_pink" />
+                <TextView
+                    android:id="@+id/tvNavStats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Statisztika"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_pink"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Profil -->
+            <LinearLayout
+                android:id="@+id/navProfileLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProfile"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profil"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream">
 
-    <!-- Fejléc -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -21,11 +20,21 @@
             android:id="@+id/welcomeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Szia, Anna"
+            android:text="@string/home_welcome_format"
             android:textSize="32sp"
             android:fontFamily="serif"
             android:textStyle="italic"
             android:textColor="@color/slate_800" />
+
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/home_cute_subtitle"
+            android:textSize="14sp"
+            android:textColor="@color/slate_500"
+            android:fontFamily="serif" />
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -33,7 +42,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,150 +50,459 @@
             android:orientation="vertical"
             android:paddingHorizontal="24dp">
 
-            <!-- Napi Tipp Szekció -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/social_button_bg"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="@android:color/white">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NAPI TIPP"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/deep_pink"
-                    android:letterSpacing="0.2" />
-
-                <TextView
-                    android:id="@+id/dailyTipText"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Ne feledd a fényvédőt, ma is ragyogó az idő!"
-                    android:textColor="@color/slate_800"
-                    android:textSize="14sp"
-                    android:fontFamily="serif" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-            <!-- Kitartás sáv -->
-            <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NAPI TIPP"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/deep_pink"
+                        android:letterSpacing="0.2" />
+
+                    <TextView
+                        android:id="@+id/dailyTipText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Ne feledd a fényvédőt, ma is ragyogó az idő!"
+                        android:textColor="@color/slate_800"
+                        android:textSize="14sp"
+                        android:fontFamily="serif" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/streakCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/soft_pink"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="32dp">
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_fire"
-                    app:tint="@color/deep_pink" />
-                <TextView
-                    android:id="@+id/streakTitle"
-                    android:layout_width="0dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#D9A8A8"
+                app:cardBackgroundColor="@color/soft_pink">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="12dp"
-                    android:text="12 napos sorozat"
-                    android:textColor="@color/slate_800"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="75%"
-                    android:textColor="@color/deep_pink"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_fire"
+                            app:tint="@color/deep_pink" />
+
+                        <TextView
+                            android:id="@+id/streakTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="0 napos sorozat"
+                            android:textColor="@color/slate_800"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/streakPercentage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textColor="@color/deep_pink"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/streakProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:progress="0"
+                        app:trackThickness="8dp"
+                        app:trackCornerRadius="4dp"
+                        app:trackColor="@android:color/white"
+                        app:indicatorColor="@color/deep_pink" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/skinDiaryCard"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                android:clickable="true"
+                android:focusable="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/ivDiaryIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_camera"
+                        app:tint="@color/powder_pink" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/ivDiaryIcon"
+                        android:layout_marginStart="20dp"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bőrnapló"
+                            android:textColor="@color/slate_800"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kövesd nyomon a változást"
+                            android:textColor="@color/slate_500"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Napi teendők"
-                android:textSize="18sp"
+                android:text="Mai rutinok"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/slate_800"
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="4dp" />
 
-            <!-- Reggeli rutin kártya -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/morningRoutineCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="120dp"
-                android:background="@android:color/white"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reggeli rutin"
-                    android:textColor="@color/slate_800"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
-                <TextView
-                    android:id="@+id/routineTitle"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Tisztítás, C-vitamin és fényvédő"
-                    android:textColor="@color/slate_500"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
-            <!-- Esti rutin kártya -->
-            <LinearLayout
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/morningIcon"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_sun"
+                            app:tint="@color/deep_pink" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/morningIcon"
+                            android:layout_marginStart="16dp"
+                            android:layout_centerVertical="true"
+                            android:text="Reggeli rutin"
+                            android:textColor="@color/slate_800"
+                            android:textStyle="bold"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/morningStatusIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/bg_square_outline"
+                            android:padding="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/morningRoutineDesc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Ébreszd fel a bőrödet frissítő tisztítással és védelemmel."
+                        android:textColor="@color/slate_500"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:id="@+id/morningRoutineSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kattints a kialakításhoz..."
+                        android:textColor="@color/deep_pink"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/eveningRoutineCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="120dp"
-                android:background="@color/soft_pink"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Esti rutin"
-                    android:textColor="@color/slate_800"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
-                <TextView
-                    android:id="@+id/routineDesc"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Dupla tisztítás, retinol és hidratálás"
-                    android:textColor="@color/slate_500"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/eveningIcon"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_moon"
+                            app:tint="@color/deep_pink" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/eveningIcon"
+                            android:layout_marginStart="16dp"
+                            android:layout_centerVertical="true"
+                            android:text="Esti rutin"
+                            android:textColor="@color/slate_800"
+                            android:textStyle="bold"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/eveningStatusIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/bg_square_outline"
+                            android:padding="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/eveningRoutineDesc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Mélytisztítás és regenerálás az éjszakai pihenéshez."
+                        android:textColor="@color/slate_500"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:id="@+id/eveningRoutineSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kattints a kialakításhoz..."
+                        android:textColor="@color/deep_pink"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Nav Bar (Statisztika gombbal) -->
-    <LinearLayout
-        android:id="@+id/bottomNav"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavCard"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:strokeWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent">
-        <TextView android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="Főoldal" android:textColor="@color/slate_800" android:textStyle="bold" android:textSize="12sp" />
-        <TextView android:id="@+id/navProducts" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="Termékek" android:textColor="@color/slate_400" android:textSize="12sp" />
-        <TextView android:id="@+id/navStats" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="Statisztika" android:textColor="@color/slate_400" android:textSize="12sp" />
-        <TextView android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="Profil" android:textColor="@color/slate_400" android:textSize="12sp" />
-    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/navHomeLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavHome"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/deep_pink" />
+                <TextView
+                    android:id="@+id/tvNavHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Főoldal"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_pink"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navProductsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProducts"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_spa"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavProducts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Termékek"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navStatsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavStats"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_fire"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavStats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Statisztika"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navProfileLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProfile"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profil"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

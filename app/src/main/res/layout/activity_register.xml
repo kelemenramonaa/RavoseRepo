@@ -225,6 +225,7 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/regRememberMe"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/powder_pink" />
@@ -232,9 +233,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Elfogadom a Feltételeket és az Adatvédelmet."
+                        android:text="Emlékezz rám"
                         android:textColor="@color/slate_500"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <Button

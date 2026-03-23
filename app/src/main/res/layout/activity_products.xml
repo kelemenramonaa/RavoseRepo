@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream">
 
-    <!-- Fejléc -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -14,24 +13,26 @@
         android:orientation="vertical"
         android:paddingHorizontal="32dp"
         android:paddingTop="60dp"
-        android:paddingBottom="24dp"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Termékek"
+            android:text="Termékeim"
             android:textSize="34sp"
             android:fontFamily="serif"
             android:textStyle="italic"
             android:textColor="@color/slate_800" />
 
         <EditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/edittext_rounded_white"
-            android:hint="Kereső"
+            android:hint="Keresés a termékek között..."
             android:paddingHorizontal="20dp"
             android:textSize="14sp"
             android:textColorHint="@color/slate_400"
@@ -39,157 +40,168 @@
             android:inputType="text" />
     </LinearLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMain"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard" />
 
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:padding="20dp"
-            android:alignmentMode="alignMargins">
+    <TextView
+        android:id="@+id/tvNoResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Még nincsenek hozzáadott termékeid."
+        android:textColor="@color/slate_400"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Termék 1 -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="12dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/beauty_products"
-                        android:scaleType="centerCrop" />
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Hidratáló"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/slate_800" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CeraVe"
-                    android:textSize="12sp"
-                    android:textColor="@color/slate_400" />
-            </LinearLayout>
-
-            <!-- Termék 2 -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="12dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/logo_flower"
-                        android:padding="30dp"
-                        android:background="@color/soft_pink"
-                        app:tint="@color/deep_pink" />
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Fényvédő"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/slate_800" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="La Roche-Posay"
-                    android:textSize="12sp"
-                    android:textColor="@color/slate_400" />
-            </LinearLayout>
-
-        </GridLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Navigáció -->
-    <LinearLayout
-        android:id="@+id/bottomNav"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavCard"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:strokeWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Főoldal"
-            android:textColor="@color/slate_400"
-            android:textSize="12sp"
-            android:fontFamily="serif" />
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/navProducts"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Termékek"
-            android:textColor="@color/slate_800"
-            android:textSize="12sp"
-            android:fontFamily="serif"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:id="@+id/navHomeLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavHome"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Főoldal"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/navStats"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Statisztika"
-            android:textColor="@color/slate_400"
-            android:textSize="12sp"
-            android:fontFamily="serif" />
+            <LinearLayout
+                android:id="@+id/navProductsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProducts"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_spa"
+                    app:tint="@color/deep_pink" />
+                <TextView
+                    android:id="@+id/tvNavProducts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Termékek"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/deep_pink"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/navProfile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Profil"
-            android:textColor="@color/slate_400"
-            android:textSize="12sp"
-            android:fontFamily="serif" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/navStatsLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavStats"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_fire"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavStats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Statisztika"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navProfileLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:id="@+id/ivNavProfile"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/slate_400" />
+                <TextView
+                    android:id="@+id/tvNavProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profil"
+                    android:textSize="10sp"
+                    android:textColor="@color/slate_400"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Termék hozzáadása"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/powder_pink"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
