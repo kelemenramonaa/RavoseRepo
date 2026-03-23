@@ -67,6 +67,12 @@ class LoginActivity : AppCompatActivity() {
                             .putString("UserName", user.displayName)
                             .apply()
                         
+
+                        val updateIntent = Intent(this@LoginActivity, NotificationReceiver::class.java).apply {
+                            action = "UPDATE_NOTIFICATIONS"
+                        }
+                        sendBroadcast(updateIntent)
+
                         Toast.makeText(this@LoginActivity, "Üdvözlünk, ${user.displayName}!", Toast.LENGTH_SHORT).show()
                         
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)

@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -38,6 +39,7 @@ class SkinDiaryActivity : AppCompatActivity() {
     private lateinit var emptyState: View
     private val photos = mutableListOf<SkinPhoto>()
     private lateinit var adapter: SkinPhotoAdapter
+    private var currentUserEmail: String = ""
 
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -54,6 +56,9 @@ class SkinDiaryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_skin_diary)
         supportActionBar?.hide()
+
+        val prefs = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+        currentUserEmail = prefs.getString("UserEmail", "") ?: ""
 
         db = AppDatabase.getDatabase(this)
         rvPhotos = findViewById(R.id.rvPhotos)
@@ -73,7 +78,7 @@ class SkinDiaryActivity : AppCompatActivity() {
     private fun loadPhotos() {
         lifecycleScope.launch {
             try {
-                val list = db.skinPhotoDao().getAllPhotos()
+                val list = db.skinPhotoDao().getAllPhotos(currentUserEmail)
                 photos.clear()
                 photos.addAll(list)
                 
@@ -114,7 +119,6 @@ class SkinDiaryActivity : AppCompatActivity() {
                 val fileName = "skin_${System.currentTimeMillis()}.jpg"
                 val file = File(filesDir, fileName)
                 
-                // Kép mentése háttérszálon
                 withContext(Dispatchers.IO) {
                     FileOutputStream(file).use { out ->
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
@@ -123,12 +127,16 @@ class SkinDiaryActivity : AppCompatActivity() {
                 }
 
                 if (file.exists()) {
-                    val skinPhoto = SkinPhoto(imagePath = file.absolutePath, date = System.currentTimeMillis())
+                    val skinPhoto = SkinPhoto(
+                        imagePath = file.absolutePath, 
+                        date = System.currentTimeMillis(),
+                        userEmail = currentUserEmail
+                    )
                     db.skinPhotoDao().insertPhoto(skinPhoto)
                     Log.d("SkinDiary", "Mentve az adatbázisba: ${file.absolutePath}")
                     
                     Toast.makeText(this@SkinDiaryActivity, "Fotó elmentve!", Toast.LENGTH_SHORT).show()
-                    loadPhotos() // Lista frissítése
+                    loadPhotos()
                 }
             } catch (e: Exception) {
                 Log.e("SkinDiary", "Mentési hiba", e)
@@ -153,7 +161,7 @@ class SkinDiaryActivity : AppCompatActivity() {
                     .centerCrop()
                     .into(holder.ivPhoto)
             } else {
-                holder.ivPhoto.setImageResource(R.drawable.ic_camera) // Tartalék ikon
+                holder.ivPhoto.setImageResource(R.drawable.ic_camera)
             }
 
             holder.tvDate.text = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(Date(item.date))

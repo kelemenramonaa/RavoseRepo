@@ -15,9 +15,8 @@ class MainActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val isLoggedIn = prefs.getBoolean("IsLoggedIn", false)
-        val rememberMe = prefs.getBoolean("RememberMe", false)
 
-        if (isLoggedIn && rememberMe) {
+        if (isLoggedIn) {
             val intent = Intent(this, HomeActivity::class.java)
             intent.putExtra("USER_NAME", prefs.getString("UserName", ""))
             intent.putExtra("USER_EMAIL", prefs.getString("UserEmail", ""))

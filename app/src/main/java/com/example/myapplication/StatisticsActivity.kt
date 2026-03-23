@@ -20,20 +20,41 @@ import java.util.*
 class StatisticsActivity : AppCompatActivity() {
 
     private val PREFS_NAME = "RoutinePrefs"
-    private val KEY_STREAK = "StreakCount"
-    private val KEY_MORNING_DONE = "MorningDone_"
-    private val KEY_EVENING_DONE = "EveningDone_"
-    private val KEY_MORNING_ROUTINE = "MorningRoutine"
-    private val KEY_EVENING_ROUTINE = "EveningRoutine"
+    private var KEY_STREAK = "StreakCount"
+    private var KEY_MORNING_DONE = "MorningDone_"
+    private var KEY_EVENING_DONE = "EveningDone_"
+    private var KEY_MORNING_ROUTINE = "MorningRoutine"
+    private var KEY_EVENING_ROUTINE = "EveningRoutine"
+    private var currentUserEmail: String = ""
 
-    private var currentMode = "WEEKLY" // WEEKLY, MONTHLY, YEARLY
+    private var currentMode = "WEEKLY"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val profilePrefs = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = profilePrefs.getBoolean("IsLoggedIn", false)
+        
+        if (!isLoggedIn) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_statistics)
         
         supportActionBar?.hide()
+
+        currentUserEmail = profilePrefs.getString("UserEmail", "") ?: ""
+
+        KEY_STREAK = currentUserEmail + "_StreakCount"
+        KEY_MORNING_DONE = currentUserEmail + "_MorningDone_"
+        KEY_EVENING_DONE = currentUserEmail + "_EveningDone_"
+        KEY_MORNING_ROUTINE = currentUserEmail + "_MorningRoutine"
+        KEY_EVENING_ROUTINE = currentUserEmail + "_EveningRoutine"
 
         val mainView = findViewById<View>(R.id.main)
         val bottomNavCard = findViewById<View>(R.id.bottomNavCard)
@@ -47,7 +68,7 @@ class StatisticsActivity : AppCompatActivity() {
             insets
         }
 
-        val userName = intent.getStringExtra("USER_NAME") ?: "Anna"
+        val userName = intent.getStringExtra("USER_NAME") ?: profilePrefs.getString("UserName", "Anna") ?: "Anna"
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             onBackPressed()
@@ -181,7 +202,8 @@ class StatisticsActivity : AppCompatActivity() {
                 actualRoutinesDone++
                 totalStepsInPeriod += mStepCount
                 for (j in 0 until mStepCount) {
-                    val cat = morningTasks.getString(j).split(":")[0].trim()
+                    val taskString = morningTasks.getString(j)
+                    val cat = taskString.split(":")[0].trim()
                     categoryMap[cat] = categoryMap.getOrDefault(cat, 0) + 1
                 }
             }
@@ -189,7 +211,8 @@ class StatisticsActivity : AppCompatActivity() {
                 actualRoutinesDone++
                 totalStepsInPeriod += eStepCount
                 for (j in 0 until eStepCount) {
-                    val cat = eveningTasks.getString(j).split(":")[0].trim()
+                    val taskString = eveningTasks.getString(j)
+                    val cat = taskString.split(":")[0].trim()
                     categoryMap[cat] = categoryMap.getOrDefault(cat, 0) + 1
                 }
             }

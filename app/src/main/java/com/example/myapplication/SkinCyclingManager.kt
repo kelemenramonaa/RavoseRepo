@@ -13,7 +13,6 @@ object SkinCyclingManager {
 
     fun getTodaysNightType(): NightType {
         val calendar = Calendar.getInstance()
-        // Egy fix kezdőponttól számítjuk a napokat (pl. 2024.01.01)
         val startCalendar = Calendar.getInstance().apply {
             set(2024, 0, 1)
         }

@@ -23,10 +23,12 @@
         <receiver
             android:name=".NotificationReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="UPDATE_NOTIFICATIONS" />
+                <action android:name="com.example.myapplication.SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
 

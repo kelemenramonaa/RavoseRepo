@@ -8,5 +8,6 @@ data class SkinPhoto(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val imagePath: String,
     val date: Long,
-    val note: String? = null
+    val note: String? = null,
+    val userEmail: String
 )

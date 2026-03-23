@@ -24,19 +24,29 @@ class RoutineMorningActivity : AppCompatActivity() {
     private lateinit var btnGenerate: Button
     
     private val PREFS_NAME = "RoutinePrefs"
-    private val KEY_MORNING_ROUTINE = "MorningRoutine"
-    private val KEY_MORNING_DONE = "MorningDone_"
-    private val KEY_EVENING_DONE = "EveningDone_"
-    private val KEY_LAST_DATE = "LastDate"
-    private val KEY_STREAK = "StreakCount"
+    private var KEY_MORNING_ROUTINE = "MorningRoutine"
+    private var KEY_MORNING_DONE = "MorningDone_"
+    private var KEY_EVENING_DONE = "EveningDone_"
+    private var KEY_LAST_DATE = "LastDate"
+    private var KEY_STREAK = "StreakCount"
     
     private var currentRoutineTasks = mutableListOf<String>()
     private var currentConflictDialog: AlertDialog? = null
+    private var currentUserEmail: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_routine_morning)
         supportActionBar?.hide()
+
+        val profilePrefs = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+        currentUserEmail = profilePrefs.getString("UserEmail", "") ?: ""
+        
+        KEY_MORNING_ROUTINE = currentUserEmail + "_MorningRoutine"
+        KEY_MORNING_DONE = currentUserEmail + "_MorningDone_"
+        KEY_EVENING_DONE = currentUserEmail + "_EveningDone_"
+        KEY_LAST_DATE = currentUserEmail + "_LastDate"
+        KEY_STREAK = currentUserEmail + "_StreakCount"
 
         productDao = AppDatabase.getDatabase(this).productDao()
         routineContainer = findViewById(R.id.routineContainer)
@@ -44,7 +54,7 @@ class RoutineMorningActivity : AppCompatActivity() {
         btnComplete = findViewById(R.id.btnCompleteRoutine)
         btnGenerate = findViewById(R.id.btnGenerateRoutine)
 
-        loadSavedRoutine()
+        loadSavedRoutine(false) // Betöltéskor ne mutasson ablakot
 
         btnGenerate.setOnClickListener {
             generateSmartRoutine()
@@ -57,14 +67,13 @@ class RoutineMorningActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnSelectProduct).setOnClickListener {
             showProductSelector()
         }
+
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
+            finish()
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadSavedRoutine()
-    }
-
-    private fun loadSavedRoutine() {
+    private fun loadSavedRoutine(shouldShowAlert: Boolean) {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val saved = prefs.getString(KEY_MORNING_ROUTINE, null)
         if (saved != null && saved != "[]") {
@@ -74,12 +83,11 @@ class RoutineMorningActivity : AppCompatActivity() {
                 currentRoutineTasks.add(jsonArray.getString(i))
             }
 
-            val tasksSnapshot = currentRoutineTasks.toList()
             lifecycleScope.launch {
-                val allProducts = productDao.getAllProductsOnce()
+                val allProducts = productDao.getAllProductsOnce(currentUserEmail)
                 var updated = false
                 val newTasks = mutableListOf<String>()
-                for (task in tasksSnapshot) {
+                for (task in currentRoutineTasks) {
                     val parts = task.split("|")
                     val productId = if (parts.size > 2) parts[2].toIntOrNull() else null
                     if (productId != null) {
@@ -88,19 +96,17 @@ class RoutineMorningActivity : AppCompatActivity() {
                             val newTask = "${product.type}: ${product.name}|${product.imageUrl ?: ""}|${product.id}"
                             if (newTask != task) updated = true
                             newTasks.add(newTask)
-                        } else {
-                            newTasks.add(task)
-                        }
-                    } else {
-                        newTasks.add(task)
-                    }
+                        } else newTasks.add(task)
+                    } else newTasks.add(task)
                 }
                 if (updated) {
                     currentRoutineTasks = newTasks
                     saveRoutine()
                 }
-                refreshUI()
-                performFullCompatibilityCheck(showAlert = false)
+                runOnUiThread {
+                    refreshUI()
+                    performFullCompatibilityCheck(showAlert = shouldShowAlert)
+                }
             }
             btnComplete.visibility = View.VISIBLE
         } else {
@@ -138,7 +144,7 @@ class RoutineMorningActivity : AppCompatActivity() {
 
     private fun generateSmartRoutine() {
         lifecycleScope.launch {
-            val allProducts = productDao.getAllProductsOnce().sortedByDescending { it.id }
+            val allProducts = productDao.getAllProductsOnce(currentUserEmail).sortedByDescending { it.id }
             val morningSteps = listOf(
                 Pair("Arctisztító", null),
                 Pair("Tonik", null),
@@ -179,7 +185,7 @@ class RoutineMorningActivity : AppCompatActivity() {
 
     private fun showProductSelector() {
         lifecycleScope.launch {
-            val allProducts = productDao.getAllProductsOnce()
+            val allProducts = productDao.getAllProductsOnce(currentUserEmail)
             val displayNames = allProducts.map { "${it.type}: ${it.name}" }.toTypedArray()
 
             if (displayNames.isEmpty()) {
@@ -195,7 +201,7 @@ class RoutineMorningActivity : AppCompatActivity() {
                         currentRoutineTasks.add("${p.type}: ${p.name}|${p.imageUrl ?: ""}|${p.id}")
                         saveRoutine()
                         refreshUI()
-                        performFullCompatibilityCheck(showAlert = true)
+                        performFullCompatibilityCheck(showAlert = true) // Hozzáadásnál mutassa
                         btnComplete.visibility = View.VISIBLE
                     }
                     .show()
@@ -214,10 +220,8 @@ class RoutineMorningActivity : AppCompatActivity() {
             val productId = if (parts.size > 2) parts[2].toIntOrNull() else null
             
             val stepView = LayoutInflater.from(this).inflate(R.layout.item_routine_step, routineContainer, false)
-            
             val tvNum = stepView.findViewById<TextView>(R.id.tvStepNumber)
             val tvCat = stepView.findViewById<TextView>(R.id.tvStepCategory)
-            val tvBrand = stepView.findViewById<TextView>(R.id.tvProductBrand)
             val tvName = stepView.findViewById<TextView>(R.id.tvProductName)
             val ivImg = stepView.findViewById<ImageView>(R.id.ivProductImage)
             val btnDelete = stepView.findViewById<ImageButton>(R.id.btnDeleteStep)
@@ -231,11 +235,9 @@ class RoutineMorningActivity : AppCompatActivity() {
             if (infoParts.size > 1) {
                 tvCat.text = infoParts[0].trim()
                 tvName.text = infoParts[1].trim()
-                tvBrand.visibility = View.GONE
             } else {
                 tvCat.text = "Lépés"
                 tvName.text = info
-                tvBrand.visibility = View.GONE
             }
 
             if (imageUrl.isNotEmpty()) {
@@ -261,7 +263,7 @@ class RoutineMorningActivity : AppCompatActivity() {
                 currentRoutineTasks.removeAt(index)
                 saveRoutine()
                 refreshUI()
-                performFullCompatibilityCheck(showAlert = false)
+                performFullCompatibilityCheck(showAlert = false) // Törlésnél ne mutasson ablakot
                 if (currentRoutineTasks.isEmpty()) btnComplete.visibility = View.GONE
             }
 
@@ -271,7 +273,7 @@ class RoutineMorningActivity : AppCompatActivity() {
 
     private fun performFullCompatibilityCheck(showAlert: Boolean) {
         lifecycleScope.launch {
-            val allProducts = productDao.getAllProductsOnce()
+            val allProducts = productDao.getAllProductsOnce(currentUserEmail)
             val routineProductIds = currentRoutineTasks.mapNotNull { it.split("|").getOrNull(2)?.toIntOrNull() }
             val productsInRoutine = allProducts.filter { it.id in routineProductIds }
 
@@ -279,13 +281,8 @@ class RoutineMorningActivity : AppCompatActivity() {
             val conflict = CompatibilityChecker.findConflicts(allIngredients)
             
             runOnUiThread {
-                if (conflict != null) {
-                    if (showAlert) showConflictDialog(conflict)
-                } else {
-                    if (currentConflictDialog?.isShowing == true) {
-                        currentConflictDialog?.dismiss()
-                        Toast.makeText(this@RoutineMorningActivity, "Kompatibilitási probléma megoldva! ✅", Toast.LENGTH_SHORT).show()
-                    }
+                if (conflict != null && showAlert) {
+                    showConflictDialog(conflict)
                 }
             }
         }
@@ -293,7 +290,6 @@ class RoutineMorningActivity : AppCompatActivity() {
 
     private fun showConflictDialog(conflict: CompatibilityChecker.Conflict) {
         if (currentConflictDialog?.isShowing == true) return
-        
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_compatibility_warning, null)
         currentConflictDialog = AlertDialog.Builder(this, R.style.CustomDialogTheme).setView(dialogView).create()
         currentConflictDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)

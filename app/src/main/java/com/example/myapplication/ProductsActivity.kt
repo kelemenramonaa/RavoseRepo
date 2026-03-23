@@ -1,14 +1,16 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -33,14 +35,27 @@ class ProductsActivity : AppCompatActivity() {
     private lateinit var tvNoResults: TextView
     private var loadJob: Job? = null
     private var currentQuery: String = ""
+    private var currentUserEmail: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val prefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("IsLoggedIn", false)
+        
+        if (!isLoggedIn) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_products)
-        
         supportActionBar?.hide()
 
+        currentUserEmail = prefs.getString("UserEmail", "") ?: ""
         val db = AppDatabase.getDatabase(this)
         productDao = db.productDao()
 
@@ -49,7 +64,7 @@ class ProductsActivity : AppCompatActivity() {
         
         setupRecyclerView()
         
-        val userName = intent.getStringExtra("USER_NAME") ?: "Anna"
+        val userName = intent.getStringExtra("USER_NAME") ?: prefs.getString("UserName", "Anna") ?: "Anna"
         setupNavigation(userName)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -70,17 +85,31 @@ class ProductsActivity : AppCompatActivity() {
             startActivity(Intent(this, AddProductActivity::class.java))
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val intent = Intent(this@ProductsActivity, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+                finish()
+            }
+        })
+
         updateList()
     }
 
     private fun setupRecyclerView() {
-        productAdapter = ProductAdapter(emptyList()) { product ->
+        productAdapter = ProductAdapter(emptyList(), { product ->
+            val intent = Intent(this, AddProductActivity::class.java).apply {
+                putExtra("PRODUCT_ID", product.id)
+            }
+            startActivity(intent)
+        }, { product ->
             lifecycleScope.launch {
                 productDao.deleteProduct(product)
                 Toast.makeText(this@ProductsActivity, "Termék törölve", Toast.LENGTH_SHORT).show()
                 updateList()
             }
-        }
+        })
         rvMain.layoutManager = LinearLayoutManager(this)
         rvMain.adapter = productAdapter
     }
@@ -89,7 +118,7 @@ class ProductsActivity : AppCompatActivity() {
         loadJob?.cancel()
         loadJob = lifecycleScope.launch {
             delay(200)
-            productDao.getAllProducts().collectLatest { allProducts ->
+            productDao.getAllProducts(currentUserEmail).collectLatest { allProducts ->
                 val filtered = if (currentQuery.isEmpty()) {
                     allProducts
                 } else {
@@ -101,16 +130,13 @@ class ProductsActivity : AppCompatActivity() {
                     tvNoResults.visibility = View.VISIBLE
                 } else {
                     tvNoResults.visibility = View.GONE
-                    // Csoportosítás kategóriák szerint
                     val groupedItems = mutableListOf<Any>()
                     val groupedMap = filtered.groupBy { it.type }
-                    
-                    // Rendezés kategória szerint (opcionális)
                     val sortedCategories = groupedMap.keys.sorted()
                     
                     for (category in sortedCategories) {
-                        groupedItems.add(category) // Header
-                        groupedItems.addAll(groupedMap[category] ?: emptyList()) // Termékek
+                        groupedItems.add(category)
+                        groupedItems.addAll(groupedMap[category] ?: emptyList())
                     }
                     productAdapter.submitList(groupedItems)
                 }

@@ -16,8 +16,6 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -32,11 +30,10 @@ import java.util.*
 
 class AddProductActivity : AppCompatActivity() {
 
-    private lateinit var imageView: ImageView
-    private lateinit var photoCard: CardView
-    private lateinit var photoOverlay: View
     private lateinit var productDao: ProductDao
-    private lateinit var editBrand: EditText
+    private lateinit var photoCard: View
+    private lateinit var imageView: ImageView
+    private lateinit var photoOverlay: View
     private lateinit var editName: EditText
     private lateinit var editNote: EditText
     private lateinit var spinnerType: Spinner
@@ -50,6 +47,7 @@ class AddProductActivity : AppCompatActivity() {
     private var selectedExpiryDate: String? = null
     private var editingProductId: Int? = null
     private var existingProduct: Product? = null
+    private var currentUserEmail: String = ""
 
     private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
@@ -93,17 +91,13 @@ class AddProductActivity : AppCompatActivity() {
             }
         }
 
-    private fun saveImageToInternalStorage(bitmap: Bitmap) {
-        try {
-            val fileName = "product_${System.currentTimeMillis()}.jpg"
-            val file = File(filesDir, fileName)
-            val fos = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
-            fos.close()
-            currentImageUrl = file.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, "Hiba a kép mentésekor", Toast.LENGTH_SHORT).show()
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            launchCamera()
+        } else {
+            Toast.makeText(this, "Kamera engedély szükséges a fotózáshoz!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -112,6 +106,9 @@ class AddProductActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_product)
 
         supportActionBar?.hide()
+
+        val profilePrefs = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+        currentUserEmail = profilePrefs.getString("UserEmail", "") ?: ""
 
         val db = AppDatabase.getDatabase(this)
         productDao = db.productDao()
@@ -127,36 +124,19 @@ class AddProductActivity : AppCompatActivity() {
             loadProductData(productId)
         }
 
-        tvIngredientsSelector.setOnClickListener {
-            showMultiSelectIngredientsDialog()
-        }
-
-        layoutExpiry.setOnClickListener {
-            showDatePickerDialog()
-        }
-
-        photoCard.setOnClickListener {
-            checkCameraPermissionAndLaunch()
-        }
-
-        findViewById<TextView>(R.id.btnCancel).setOnClickListener {
-            finish()
-        }
-
-        findViewById<TextView>(R.id.btnAddCustomIngredient).setOnClickListener {
-            showCustomIngredientDialog()
-        }
-
-        btnSave.setOnClickListener {
-            saveProduct()
-        }
+        tvIngredientsSelector.setOnClickListener { showMultiSelectIngredientsDialog() }
+        layoutExpiry.setOnClickListener { showDatePickerDialog() }
+        photoCard.setOnClickListener { checkCameraPermissionAndLaunch() }
+        
+        findViewById<TextView>(R.id.btnCancel).setOnClickListener { finish() }
+        findViewById<TextView>(R.id.btnAddCustomIngredient).setOnClickListener { showCustomIngredientDialog() }
+        btnSave.setOnClickListener { saveProduct() }
     }
 
     private fun initViews() {
         photoCard = findViewById(R.id.photoCard)
         imageView = findViewById(R.id.productImageView)
         photoOverlay = findViewById(R.id.photoOverlay)
-        editBrand = findViewById(R.id.editProductBrand)
         editName = findViewById(R.id.editProductName)
         editNote = findViewById(R.id.editNote)
         spinnerType = findViewById(R.id.spinnerType)
@@ -168,15 +148,39 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun setupTypeSpinner() {
-        val categories = listOf(
-            "Arctisztító", "Olajos lemosó", "Tonik", "Hámlasztó", "Esszencia", 
-            "Ampulla", "Szérum", "Hidratáló", "Arcolaj", "Fényvédő", 
-            "Szemkörnyékápoló", "Maszk", "Célzott kezelés", "Ajakápoló"
-        ).sorted()
-        
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+        val types = arrayOf("Arctisztító", "Olajos lemosó", "Tonik", "Esszencia", "Szérum", "Hidratáló", "Fényvédő", "Hámlasztó", "Retinoid", "Peptid", "Niacinamide", "Arcolaj", "Maszk", "Egyéb")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, types)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerType.adapter = adapter
+    }
+
+    private fun checkCameraPermissionAndLaunch() {
+        when {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                launchCamera()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+    private fun launchCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePictureLauncher.launch(intent)
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap) {
+        try {
+            val fileName = "product_${System.currentTimeMillis()}.jpg"
+            val file = File(filesDir, fileName)
+            FileOutputStream(file).use { fos ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
+            }
+            currentImageUrl = file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun loadProductData(id: Int) {
@@ -185,33 +189,24 @@ class AddProductActivity : AppCompatActivity() {
             product?.let { p ->
                 existingProduct = p
                 runOnUiThread {
-                    editBrand.setText(p.brand)
                     editName.setText(p.name)
                     editNote.setText(p.note)
                     
-                    @Suppress("UNCHECKED_CAST")
-                    val adapter = spinnerType.adapter as ArrayAdapter<String>
-                    val position = adapter.getPosition(p.type)
+                    val adapter = spinnerType.adapter as? ArrayAdapter<String>
+                    val position = adapter?.getPosition(p.type) ?: -1
                     if (position >= 0) spinnerType.setSelection(position)
                     
                     selectedExpiryDate = p.expiryDate
                     tvExpiryDisplay.text = p.expiryDate ?: "Nincs megadva"
-                    
                     p.ingredients?.let { ingredientsStr ->
                         tvIngredientsSelector.text = ingredientsStr
                         val items = ingredientsStr.split(", ").map { it.trim() }
                         items.forEach { item ->
                             val index = activeIngredientsList.indexOf(item)
-                            if (index >= 0) {
-                                selectedItems[index] = true
-                            } else {
-                                if (!customIngredients.contains(item)) {
-                                    customIngredients.add(item)
-                                }
-                            }
+                            if (index >= 0) selectedItems[index] = true
+                            else if (!customIngredients.contains(item)) customIngredients.add(item)
                         }
                     }
-                    
                     currentImageUrl = p.imageUrl
                     if (!p.imageUrl.isNullOrEmpty()) {
                         imageView.setPadding(0, 0, 0, 0)
@@ -224,85 +219,61 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
 
+    private fun processImageWithMLKit(bitmap: Bitmap) {
+        val image = InputImage.fromBitmap(bitmap, 0)
+        recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                val detectedText = visionText.text
+                if (detectedText.isNotEmpty()) {
+                    if (editName.text.isEmpty()) {
+                        val firstLine = detectedText.split("\n").firstOrNull()
+                        editName.setText(firstLine)
+                    }
+                }
+            }
+    }
+
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
-        if (selectedExpiryDate != null) {
-            try {
-                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                sdf.parse(selectedExpiryDate!!)?.let { calendar.time = it }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(this, { _, year, monthOfYear, dayOfMonth ->
-            val date = String.format(Locale.US, "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth)
+        val datePickerDialog = DatePickerDialog(this, { _, year, month, day ->
+            val date = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day)
             selectedExpiryDate = date
             tvExpiryDisplay.text = date
-        }, year, month, day)
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.show()
     }
 
     private fun saveProduct() {
-        val brand = editBrand.text.toString().trim()
         val name = editName.text.toString().trim()
         val type = spinnerType.selectedItem.toString()
         val note = editNote.text.toString().trim()
-        var ingredientsString = tvIngredientsSelector.text.toString()
-        
-        if (ingredientsString == "Válassz összetevőket...") {
-            ingredientsString = ""
+        val ingredientsString = tvIngredientsSelector.text.toString().let {
+            if (it == "Válassz összetevőket...") "" else it
         }
 
-        if (name.isNotEmpty()) {
-            lifecycleScope.launch {
-                val productToSave = if (editingProductId != null) {
-                    existingProduct?.copy(
-                        brand = brand,
-                        name = name,
-                        type = type,
-                        note = note,
-                        ingredients = ingredientsString.ifEmpty { null },
-                        expiryDate = selectedExpiryDate,
-                        imageUrl = currentImageUrl
-                    )
-                } else {
-                    Product(
-                        brand = brand,
-                        name = name,
-                        imageUrl = currentImageUrl,
-                        ingredients = ingredientsString.ifEmpty { null },
-                        type = type,
-                        note = note,
-                        expiryDate = selectedExpiryDate
-                    )
-                }
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Kérjük, töltse ki a termék nevét!", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-                productToSave?.let {
-                    if (editingProductId != null) {
-                        productDao.updateProduct(it)
-                    } else {
-                        productDao.insertProduct(it)
-                    }
+        lifecycleScope.launch {
+            val productToSave = if (editingProductId != null) {
+                existingProduct?.copy(name = name, type = type, note = note, ingredients = ingredientsString.ifEmpty { null }, expiryDate = selectedExpiryDate, imageUrl = currentImageUrl)
+            } else {
+                Product(name = name, imageUrl = currentImageUrl, ingredients = ingredientsString.ifEmpty { null }, type = type, note = note, expiryDate = selectedExpiryDate, userEmail = currentUserEmail)
+            }
 
-                    selectedExpiryDate?.let { date ->
-                        scheduleExpiryNotification(name, date)
-                    }
+            productToSave?.let {
+                if (editingProductId != null) productDao.updateProduct(it)
+                else productDao.insertProduct(it)
 
-                    runOnUiThread {
-                        Toast.makeText(this@AddProductActivity, 
-                            if (editingProductId != null) "Termék módosítva!" else "Termék mentve!", 
-                            Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
+                selectedExpiryDate?.let { date -> scheduleExpiryNotification(name, date) }
+
+                runOnUiThread {
+                    Toast.makeText(this@AddProductActivity, "Mentve!", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
-        } else {
-            Toast.makeText(this, "Kérjük, töltse ki a termék nevét!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -310,132 +281,67 @@ class AddProductActivity : AppCompatActivity() {
         try {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val expiryDate = sdf.parse(expiryDateStr) ?: return
-            
-            val calendar = Calendar.getInstance()
-            calendar.time = expiryDate
-            calendar.add(Calendar.DAY_OF_YEAR, -7)
-            calendar.set(Calendar.HOUR_OF_DAY, 9)
-            calendar.set(Calendar.MINUTE, 0)
+            val calendar = Calendar.getInstance().apply {
+                time = expiryDate
+                add(Calendar.DAY_OF_YEAR, -7)
+                set(Calendar.HOUR_OF_DAY, 9)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
 
             if (calendar.timeInMillis > System.currentTimeMillis()) {
                 val intent = Intent(this, NotificationReceiver::class.java).apply {
+                    action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
                     putExtra("title", "Lejáró termék!")
                     putExtra("message", "A(z) $productName egy hét múlva lejár.")
                     putExtra("type", "expiry")
                 }
-
-                val pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    productName.hashCode(),
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
+                val pendingIntent = PendingIntent.getBroadcast(this, productName.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                 val alarmManager = getSystemService(AlarmManager::class.java)
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (alarmManager.canScheduleExactAlarms()) {
+                    if (alarmManager?.canScheduleExactAlarms() == true) {
                         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
                     } else {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                        alarmManager?.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
                     }
                 } else {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                    alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-
-    private fun showMultiSelectIngredientsDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Válassz összetevőket")
-        builder.setMultiChoiceItems(activeIngredientsList.toTypedArray(), selectedItems) { _, which, isChecked ->
-            selectedItems[which] = isChecked
-        }
-        builder.setPositiveButton("Kész") { _, _ ->
-            updateIngredientsText()
-        }
-        builder.setNegativeButton("Mégse", null)
-        builder.show()
-    }
-
-    private fun updateIngredientsText() {
-        val allSelected = mutableListOf<String>()
-        activeIngredientsList.forEachIndexed { index, name ->
-            if (selectedItems[index]) allSelected.add(name)
-        }
-        allSelected.addAll(customIngredients)
-        
-        if (allSelected.isEmpty()) {
-            tvIngredientsSelector.text = "Válassz összetevőket..."
-        } else {
-            tvIngredientsSelector.text = allSelected.joinToString(", ")
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun showCustomIngredientDialog() {
         val input = EditText(this)
-        input.hint = "pl. Squalane"
+        input.hint = "Pl. Cica, Probiotikumok..."
         AlertDialog.Builder(this)
-            .setTitle("Egyéni összetevő")
-            .setMessage("Írd be az összetevő nevét:")
+            .setTitle("Egyedi összetevő hozzáadása")
             .setView(input)
             .setPositiveButton("Hozzáadás") { _, _ ->
-                val name = input.text.toString().trim()
-                if (name.isNotEmpty()) {
-                    if (!customIngredients.contains(name)) {
-                        customIngredients.add(name)
-                        updateIngredientsText()
-                        Toast.makeText(this, "$name hozzáadva", Toast.LENGTH_SHORT).show()
-                    }
+                val text = input.text.toString().trim()
+                if (text.isNotEmpty() && !customIngredients.contains(text)) {
+                    customIngredients.add(text)
+                    updateIngredientsText()
                 }
             }
             .setNegativeButton("Mégse", null)
             .show()
     }
 
-    private fun processImageWithMLKit(bitmap: Bitmap) {
-        val image = InputImage.fromBitmap(bitmap, 0)
-        recognizer.process(image)
-            .addOnSuccessListener { visionText ->
-                val resultText = visionText.text
-                if (resultText.isNotEmpty()) {
-                    val lines = resultText.split("\n").filter { it.trim().length > 2 }
-                    if (lines.isNotEmpty()) {
-                        editBrand.setText(lines[0].trim())
-                        if (lines.size > 1) {
-                            editName.setText(lines.drop(1).take(2).joinToString(" "))
-                        }
-                    }
-                    checkIngredientsInText(resultText)
-                    updateIngredientsText()
-                    Toast.makeText(this, "Adatok felismerve!", Toast.LENGTH_SHORT).show()
-                }
-            }
+    private fun showMultiSelectIngredientsDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Válassz összetevőket")
+            .setMultiChoiceItems(activeIngredientsList.toTypedArray(), selectedItems) { _, which, isChecked -> selectedItems[which] = isChecked }
+            .setPositiveButton("Kész") { _, _ -> updateIngredientsText() }
+            .setNegativeButton("Mégse", null)
+            .show()
     }
 
-    private fun checkIngredientsInText(text: String) {
-        activeIngredientsList.forEachIndexed { index, name ->
-            val searchTerms = name.split("(", ")", "/").map { it.trim() }.filter { it.length > 3 }
-            if (searchTerms.any { text.contains(it, ignoreCase = true) }) {
-                selectedItems[index] = true
-            }
-        }
-    }
-
-    private fun checkCameraPermissionAndLaunch() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 100)
-        } else {
-            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            try {
-                takePictureLauncher.launch(takePictureIntent)
-            } catch (e: Exception) {
-                Toast.makeText(this, "Kamera hiba: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private fun updateIngredientsText() {
+        val allSelected = activeIngredientsList.filterIndexed { index, _ -> selectedItems[index] }.toMutableList()
+        allSelected.addAll(customIngredients)
+        tvIngredientsSelector.text = if (allSelected.isEmpty()) "Válassz összetevőket..." else allSelected.joinToString(", ")
     }
 }

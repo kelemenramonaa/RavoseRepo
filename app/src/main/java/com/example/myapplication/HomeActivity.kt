@@ -1,7 +1,10 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +12,9 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -23,27 +28,59 @@ import java.util.*
 class HomeActivity : AppCompatActivity() {
 
     private val PREFS_NAME = "RoutinePrefs"
-    private val KEY_MORNING_DONE = "MorningDone_"
-    private val KEY_EVENING_DONE = "EveningDone_"
-    private val KEY_LAST_DATE = "LastDate"
-    private val KEY_STREAK = "StreakCount"
-    private val KEY_MORNING_ROUTINE = "MorningRoutine"
-    private val KEY_EVENING_ROUTINE = "EveningRoutine"
+    private var KEY_MORNING_DONE = "MorningDone_"
+    private var KEY_EVENING_DONE = "EveningDone_"
+    private var KEY_LAST_DATE = "LastDate"
+    private var KEY_STREAK = "StreakCount"
+    private var KEY_MORNING_ROUTINE = "MorningRoutine"
+    private var KEY_EVENING_ROUTINE = "EveningRoutine"
+    private var currentUserEmail: String = ""
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(this, "Értesítések engedélyezve!", Toast.LENGTH_SHORT).show()
+            // Ütemezzük újra őket, ha most kaptuk meg az engedélyt
+            updateNotifications()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val profilePrefs = getSharedPreferences("ProfilePrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = profilePrefs.getBoolean("IsLoggedIn", false)
+        
+        if (!isLoggedIn) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
-        
         supportActionBar?.hide()
 
-        val userName = intent.getStringExtra("USER_NAME") ?: getString(R.string.home_default_username)
+        currentUserEmail = profilePrefs.getString("UserEmail", "") ?: ""
+
+        KEY_MORNING_DONE = currentUserEmail + "_MorningDone_"
+        KEY_EVENING_DONE = currentUserEmail + "_EveningDone_"
+        KEY_LAST_DATE = currentUserEmail + "_LastDate"
+        KEY_STREAK = currentUserEmail + "_StreakCount"
+        KEY_MORNING_ROUTINE = currentUserEmail + "_MorningRoutine"
+        KEY_EVENING_ROUTINE = currentUserEmail + "_EveningRoutine"
+
+        val userName = intent.getStringExtra("USER_NAME") ?: profilePrefs.getString("UserName", "Szépségem") ?: "Szépségem"
         findViewById<TextView>(R.id.welcomeText).text = getString(R.string.home_welcome_format, userName)
 
         setDailyTip()
         checkAndResetStreak()
         updateStreakAndProgress()
         loadRoutineTitles()
+        checkNotificationPermission()
 
         val mainView = findViewById<View>(R.id.main)
         val bottomNavCard = findViewById<View>(R.id.bottomNavCard)
@@ -80,6 +117,21 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun updateNotifications() {
+        val intent = Intent(this, NotificationReceiver::class.java).apply {
+            action = NotificationReceiver.ACTION_UPDATE_NOTIFICATIONS
+        }
+        sendBroadcast(intent)
+    }
+
     private fun setupNavigation(userName: String) {
         val navHome = findViewById<LinearLayout>(R.id.navHomeLayout)
         val navProducts = findViewById<LinearLayout>(R.id.navProductsLayout)
@@ -89,21 +141,15 @@ class HomeActivity : AppCompatActivity() {
         updateNavUI(navHome, true)
 
         navProducts.setOnClickListener {
-            val intent = Intent(this, ProductsActivity::class.java)
-            intent.putExtra("USER_NAME", userName)
-            startActivity(intent)
+            startActivity(Intent(this, ProductsActivity::class.java).putExtra("USER_NAME", userName))
         }
 
         navStats.setOnClickListener {
-            val intent = Intent(this, StatisticsActivity::class.java)
-            intent.putExtra("USER_NAME", userName)
-            startActivity(intent)
+            startActivity(Intent(this, StatisticsActivity::class.java).putExtra("USER_NAME", userName))
         }
 
         navProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            intent.putExtra("USER_NAME", userName)
-            startActivity(intent)
+            startActivity(Intent(this, ProfileActivity::class.java).putExtra("USER_NAME", userName))
         }
     }
 

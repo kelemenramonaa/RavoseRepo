@@ -10,22 +10,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EditProfileActivity : AppCompatActivity() {
 
     private val PREFS_NAME = "ProfilePrefs"
-    private val KEY_SURNAME = "UserSurname"
-    private val KEY_FIRST_NAME = "UserFirstName"
-    private val KEY_NICKNAME = "UserNickname"
-    private val KEY_PASSWORD = "UserPassword"
-    private val KEY_USER_NAME = "UserName" // A profil fejlécében megjelenő név
+    private var currentUserEmail: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("IsLoggedIn", false)
+        
+        if (!isLoggedIn) {
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_edit_profile)
-
         supportActionBar?.hide()
+
+        currentUserEmail = prefs.getString("UserEmail", "") ?: ""
 
         val mainView = findViewById<android.view.View>(R.id.main)
         if (mainView != null) {
@@ -40,8 +50,6 @@ class EditProfileActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
         val editSurname = findViewById<EditText>(R.id.editSurname)
         val editFirstName = findViewById<EditText>(R.id.editFirstName)
         val editNickname = findViewById<EditText>(R.id.editNickname)
@@ -49,12 +57,23 @@ class EditProfileActivity : AppCompatActivity() {
         val editPasswordConfirm = findViewById<EditText>(R.id.editPasswordConfirm)
         val btnSaveData = findViewById<Button>(R.id.btnSaveData)
 
-        // Adatok betöltése
-        editSurname.setText(prefs.getString(KEY_SURNAME, ""))
-        editFirstName.setText(prefs.getString(KEY_FIRST_NAME, ""))
-        editNickname.setText(prefs.getString(KEY_NICKNAME, ""))
-        editPassword.setText(prefs.getString(KEY_PASSWORD, ""))
-        editPasswordConfirm.setText(prefs.getString(KEY_PASSWORD, ""))
+        val db = AppDatabase.getDatabase(this)
+
+        lifecycleScope.launch {
+            val user = withContext(Dispatchers.IO) {
+                db.userDao().getUserByEmail(currentUserEmail)
+            }
+            
+            user?.let { u ->
+                runOnUiThread {
+                    editSurname.setText(u.surname)
+                    editFirstName.setText(u.firstName)
+                    editNickname.setText(u.nickname)
+                    editPassword.setText(u.password)
+                    editPasswordConfirm.setText(u.password)
+                }
+            }
+        }
 
         btnSaveData.setOnClickListener {
             val surname = editSurname.text.toString().trim()
@@ -68,32 +87,41 @@ class EditProfileActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (surname.isEmpty() && firstName.isEmpty() && nickname.isEmpty()) {
-                Toast.makeText(this, "Kérjük, adj meg legalább egy nevet!", Toast.LENGTH_SHORT).show()
+            if (firstName.isEmpty()) {
+                Toast.makeText(this, "A keresztnév kötelező!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            saveAllData(surname, firstName, nickname, pass)
-            Toast.makeText(this, "Adatok elmentve!", Toast.LENGTH_SHORT).show()
-            finish()
-        }
-    }
+            val displayName = if (nickname.isNotEmpty()) nickname else "$surname $firstName".trim()
 
-    private fun saveAllData(surname: String, firstName: String, nickname: String, password: String) {
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        // Becenév az elsődleges, ha nincs, akkor a Vezetéknév + Keresztnév
-        val displayName = when {
-            nickname.isNotEmpty() -> nickname
-            surname.isNotEmpty() || firstName.isNotEmpty() -> "$surname $firstName".trim()
-            else -> "Felhasználó"
+            lifecycleScope.launch {
+                val user = withContext(Dispatchers.IO) {
+                    db.userDao().getUserByEmail(currentUserEmail)
+                }
+                
+                user?.let { u ->
+                    val updatedUser = u.copy(
+                        surname = surname,
+                        firstName = firstName,
+                        nickname = nickname,
+                        password = pass,
+                        displayName = displayName
+                    )
+                    
+                    withContext(Dispatchers.IO) {
+                        db.userDao().updateUser(updatedUser)
+                    }
+
+                    prefs.edit()
+                        .putString("UserName", displayName)
+                        .apply()
+
+                    runOnUiThread {
+                        Toast.makeText(this@EditProfileActivity, "Adatok elmentve!", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+            }
         }
-        
-        prefs.edit()
-            .putString(KEY_SURNAME, surname)
-            .putString(KEY_FIRST_NAME, firstName)
-            .putString(KEY_NICKNAME, nickname)
-            .putString(KEY_PASSWORD, password)
-            .putString(KEY_USER_NAME, displayName)
-            .apply()
     }
 }

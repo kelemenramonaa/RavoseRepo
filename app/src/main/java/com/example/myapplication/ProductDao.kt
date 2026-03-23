@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Query("SELECT * FROM products_table ORDER BY id DESC")
-    fun getAllProducts(): Flow<List<Product>>
+    @Query("SELECT * FROM products_table WHERE userEmail = :email ORDER BY id DESC")
+    fun getAllProducts(email: String): Flow<List<Product>>
 
-    @Query("SELECT * FROM products_table ORDER BY id DESC")
-    suspend fun getAllProductsOnce(): List<Product>
+    @Query("SELECT * FROM products_table WHERE userEmail = :email ORDER BY id DESC")
+    suspend fun getAllProductsOnce(email: String): List<Product>
 
     @Query("SELECT * FROM products_table WHERE id = :id")
     suspend fun getProductById(id: Int): Product?
@@ -25,9 +25,10 @@ interface ProductDao {
 
     @Query("""
         SELECT * FROM products_table 
-        WHERE (:category IS NULL OR type LIKE '%' || :category || '%')
-        AND (:query = '' OR name LIKE '%' || :query || '%' OR brand LIKE '%' || :query || '%')
+        WHERE userEmail = :email
+        AND (:category IS NULL OR type LIKE '%' || :category || '%')
+        AND (:query = '' OR name LIKE '%' || :query || '%')
         ORDER BY id DESC
     """)
-    fun searchProductsCombined(query: String, category: String?): Flow<List<Product>>
+    fun searchProductsCombined(email: String, query: String, category: String?): Flow<List<Product>>
 }

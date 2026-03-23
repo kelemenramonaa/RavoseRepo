@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/cream">
 
-    <!-- Header / Toolbar -->
+
     <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Vezetéknév -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                 android:textSize="14sp"
                 android:importantForAutofill="no" />
 
-            <!-- Keresztnév -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 android:textSize="14sp"
                 android:importantForAutofill="no" />
 
-            <!-- Becenév -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
                 android:textSize="14sp"
                 android:importantForAutofill="no" />
 
-            <!-- Jelszó módosítása -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
