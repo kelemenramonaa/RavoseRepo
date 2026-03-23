@@ -56,12 +56,18 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let {
-            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            savePreference(currentUserEmail + "_" + KEY_PROFILE_IMAGE_URI, it.toString())
-            loadProfileImage(it.toString())
-            Toast.makeText(this, "Profilkép frissítve!", Toast.LENGTH_SHORT).show()
+            try {
+                contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                savePreference(currentUserEmail + "_" + KEY_PROFILE_IMAGE_URI, it.toString())
+                loadProfileImage(it.toString())
+                Toast.makeText(this, "Profilkép frissítve!", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+
+                savePreference(currentUserEmail + "_" + KEY_PROFILE_IMAGE_URI, it.toString())
+                loadProfileImage(it.toString())
+            }
         }
     }
 
@@ -90,11 +96,20 @@ class ProfileActivity : AppCompatActivity() {
         checkAndRequestPermissions()
 
         findViewById<ImageView>(R.id.profileImage).setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            pickImageLauncher.launch(arrayOf("image/*"))
+        }
+
+        findViewById<View>(R.id.btnChangePhoto).setOnClickListener {
+            pickImageLauncher.launch(arrayOf("image/*"))
         }
 
         val userName = prefs.getString(KEY_USER_NAME, "Anna") ?: "Anna"
         setupNavigation(userName)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateProfileUI()
     }
 
     private fun checkAndRequestPermissions() {
